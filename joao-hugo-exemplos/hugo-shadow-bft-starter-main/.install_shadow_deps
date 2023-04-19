@@ -1,0 +1,45 @@
+#!/bin/bash
+
+if ! command -v "cargo" &> /dev/null
+then
+    sudo apt-get install -y \
+        cmake \
+        findutils \
+        libclang-dev \
+        libc-dbg \
+        libglib2.0-0 \
+        libglib2.0-dev \
+        make \
+        python3 \
+        python3-pip \
+        xz-utils \
+        util-linux \
+        gcc \
+        g++ \
+        curl \
+        ansible \
+        git \
+        openjdk-11-jre-headless
+
+
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+    echo "The system will now reboot"
+    echo "After the reboot run the script ./hugo-run.sh again"
+
+    sleep 3
+    reboot
+    exit
+fi
+
+
+
+
+
+git clone https://github.com/shadow/shadow.git
+cd shadow
+./setup build --clean --test
+./setup test
+# Optionally install (to ~/.local/bin by default). Can otherwise run the binary
+# directly at build/src/main/shadow.
+./setup install

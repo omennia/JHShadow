@@ -1,0 +1,11 @@
+Starting server
+('11.19.171.162', 8888)
+socket binded to port 8888
+socket is listening
+Connected to : 11.0.0.1 : 50097
+Connected to : 11.0.0.2 : 18219
+Received b'My first message 2000-01-01 00:00:02.002616'
+Connected to : 11.0.0.3 : 53993
+Ending server
+Received b'My first message 2000-01-01 00:00:02.002616'
+Received b'My first message 2000-01-01 00:00:02.002616'

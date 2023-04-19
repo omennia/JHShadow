@@ -1,0 +1,18 @@
+[package]
+name = "logger"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[build-dependencies]
+cc = { version = "1.0", features = ["parallel"] }
+bindgen = { version = "0.64.0" }
+shadow-build-common = { path = "../shadow-build-common" }
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["staticlib", "rlib"]
+

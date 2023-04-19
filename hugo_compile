@@ -1,0 +1,5 @@
+./setup build --clean
+# ./setup build --clean --test
+# ./setup test
+./setup install
+

@@ -1,0 +1,26 @@
+general:
+  log_level: trace
+  stop_time: 4s
+  model_unblocked_syscall_latency: true # Isto tem de estar a false
+
+network:
+  graph:
+    type: 1_gbit_switch
+
+hosts:
+  server:
+    ip_addr: 11.19.171.162
+    network_node_id: 0
+    options:
+      log_level: trace
+    processes:
+      - path: python
+        args: ../../../server.py 11.19.171.162 8888
+        start_time: 1s
+  client:
+    network_node_id: 0
+    quantity: 3
+    processes:
+      - path: python
+        args: ../../../client.py server 8888
+        start_time: 2s

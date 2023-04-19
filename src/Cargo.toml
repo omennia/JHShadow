@@ -1,0 +1,17 @@
+[workspace]
+
+members = [
+    "main",
+    "test",
+    "lib/shadow-build-common",
+    "lib/gml-parser",
+    "lib/logger",
+    "lib/shmem",
+    "lib/shadow-shim-helper-rs",
+    "lib/syscall-logger",
+    "lib/tsc",
+    "lib/vasi",
+    "lib/vasi-macro",
+    "lib/vasi-sync",
+    "lib/zermia_lib",
+]

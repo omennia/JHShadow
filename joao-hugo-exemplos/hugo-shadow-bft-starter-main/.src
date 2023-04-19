@@ -1,0 +1,2 @@
+echo 'export PATH="${PATH}:/home/${USER}/.local/bin"' >> ~/.bash_files
+source ~/.bash_files

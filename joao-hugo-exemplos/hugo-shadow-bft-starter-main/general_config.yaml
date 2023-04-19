@@ -1,0 +1,65 @@
+# Simulations settings #########################################
+
+HOME_DIR: /home/red/hugo-shadow-bft-starter
+TARGET: /home/red/hugo-shadow-bft-starter/results
+SHADOW_DIR: /home/red/shadow
+BFT_SMART_DIR: /home/red/hugo-shadow-bft-starter/library
+NUMBER_OF_NODES: 7
+NUMBER_OF_REPLICAS: 4
+NUMBER_OF_CLIENTS: 3
+
+
+
+# In here we can override system settings #######################
+
+# COMMUNICATION secretKeyAlgorithm: PBKDF2WithHmacSHA1
+# COMMUNICATION secretKeyAlgorithmProvider: SunJCE
+# COMMUNICATION hashAlgorithm: SHA-256
+# COMMUNICATION hashAlgorithmProvider: SUN
+# COMMUNICATION signatureAlgorithm: SHA256withECDSA
+# COMMUNICATION signatureAlgorithmProvider: BC
+# COMMUNICATION defaultKeyLoader: ECDSA
+# COMMUNICATION useSenderThread: true
+# COMMUNICATION defaultkeys: true
+# COMMUNICATION bindaddress: auto
+# COMMUNICATION inQueueSize: 500000
+# COMMUNICATION outQueueSize: 500000
+# COMMUNICATION useSignatures: 0
+
+# TOTAL_ORDER_MULTICAST batchtimeout: -1
+# TOTAL_ORDER_MULTICAST fairbatch: true
+# TOTAL_ORDER_MULTICAST nonces: 10
+# TOTAL_ORDER_MULTICAST verifyTimestamps: false
+# TOTAL_ORDER_MULTICAST state_transfer: true
+# TOTAL_ORDER_MULTICAST highMark: 10000
+# TOTAL_ORDER_MULTICAST revival_highMark: 10
+# TOTAL_ORDER_MULTICAST timeout_highMark: 200
+# TOTAL_ORDER_MULTICAST log: true
+# TOTAL_ORDER_MULTICAST log_parallel: false
+# TOTAL_ORDER_MULTICAST log_to_disk: false
+# TOTAL_ORDER_MULTICAST sync_log: false
+# TOTAL_ORDER_MULTICAST checkpoint_period: 1024
+# TOTAL_ORDER_MULTICAST global_checkpoint_period: 120000
+# TOTAL_ORDER_MULTICAST checkpoint_to_disk: false
+# TOTAL_ORDER_MULTICAST sync_ckp: false
+TOTAL_ORDER_MULTICAST maxBatchSizeInBytes: 9999
+# TOTAL_ORDER_MULTICAST maxbatchsize: 1000
+# TOTAL_ORDER_MULTICAST timeout: 2000
+
+# SSLTLS protocol_version: TLSv1.2
+# SSLTLS key_store_file: EC_KeyPair_256.pkcs12
+# SSLTLS enabled_ciphers: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+
+# TTP id: 7002
+
+# SYSTEM shutdownhook: true
+# SYSTEM samebatchsize: false
+# SYSTEM numrepliers: 16
+# SYSTEM bft: true
+
+# INITIAL view: 0,1,2,3
+
+# SERVERS num: 4
+# SERVERS f: 0
+
+# CLIENT invokeOrderedTimeout: 40

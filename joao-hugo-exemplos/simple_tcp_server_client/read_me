@@ -1,0 +1,8 @@
+Para a simulação funcionar é necessário que a pasta project-tonic esteja no PATH
+
+
+Adicionar esta linha ao ficheiro .bashrc:
+
+export PATH="${PATH}:/home/shadow-starter/simple_tcp_server_client/project-tonic/target/debug"
+
+E fazer source .bashrc

@@ -1,0 +1,27 @@
+[package]
+name = "config-tonic"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]] # Bin to run the Monitor gRPC server
+name = "h_monitor"
+path = "src/h_monitor.rs"
+
+[[bin]] # Bin to run the server
+name = "h_server"
+path = "src/h_server.rs"
+
+[[bin]] # Bin to run the client
+name = "h_client"
+path = "src/h_client.rs"
+
+
+[dependencies]
+tonic = "0.8"
+prost = "0.11"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+libc = { version = "0.2.97", default-features = false, features = ["std"] }
+
+
+[build-dependencies]
+tonic-build = "0.8"

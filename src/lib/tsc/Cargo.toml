@@ -1,0 +1,22 @@
+[package]
+name = "shadow_tsc"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+logger = { path = "../logger" }
+
+[build-dependencies]
+cc = { version = "1.0", features = ["parallel"] }
+shadow-build-common = { path = "../shadow-build-common" }
+system-deps = "6.0"
+cbindgen = { version = "0.24.3" }
+
+[lib]
+crate-type = ["staticlib", "rlib"]
+
+[package.metadata.system-deps]
+# Keep consistent with the minimum version number in src/CMakeLists.txt
+glib = { name = "glib-2.0", version = "2.32" }
