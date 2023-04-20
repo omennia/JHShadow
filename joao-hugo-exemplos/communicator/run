@@ -2,7 +2,7 @@
 
 
 echo "Compiling Receiver and Sender"
-cargo build --manifest-path /home/shadow-starter/shadow-main/joao-hugo-exemplos/communicator/Cargo.toml
+cargo build --manifest-path /home/shadow-starter/JHShadow/joao-hugo-exemplos/communicator/Cargo.toml
 
 
 
