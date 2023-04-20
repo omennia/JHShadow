@@ -12,6 +12,8 @@ use shadow_shim_helper_rs::rootedcell::refcell::RootedRefCell;
 use shadow_shim_helper_rs::simulation_time::SimulationTime;
 use shadow_shim_helper_rs::HostId;
 
+use std::os::raw::{c_char/* , c_int */}; // FFI safety I guess
+
 use super::work::event_queue::EventQueue;
 use crate::core::controller::ShadowStatusBarState;
 use crate::core::scheduler::runahead::Runahead;
@@ -370,6 +372,15 @@ impl Worker {
 
         let src_ip = std::net::IpAddr::V4(src_ip);
         let dst_ip = std::net::IpAddr::V4(dst_ip);
+
+        println!("\nUm novo packet está a ser enviado de {:?} para {:?}", src_ip, dst_ip);
+        if payload_size == 0{
+            println!("A payload size é 0 então é um packet de controlo\n");
+        }
+        else{
+            println!("A payload size é {} então é um packet de dados\n", payload_size);
+        }
+
 
         // check if network reliability forces us to 'drop' the packet
         let reliability: f64 = Worker::with(|w| w.shared.reliability(src_ip, dst_ip).unwrap())
