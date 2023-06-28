@@ -11,21 +11,37 @@ A **grande maioria** destas mudanças tem o prefixo // ADDED - JH
 e acabam com //END
 
 
+## Primeiro devemos instalar as dependências.
+
+Instalar as dependências em https://shadow.github.io/docs/guide/install_dependencies.html
 
 
-## Quickstart
 
-After installing the [dependencies](https://shadow.github.io/docs/guide/install_dependencies.html): build, test, and install Shadow into `~/.local`:
 
+## Começar a instalação do Shadow
 ```
-$ ./setup build --clean --test
-$ ./setup test
-$ ./setup install
+./hugo_clean
+./hugo_compile
+```
+Daqui para a frente o resto do README é o mesmo do Shadow.
+
+## Adicionar o Shadow ao PATH
+Corremos:
+```
+echo 'export PATH="${PATH}:/home/${USER}/.local/bin"' >> ~/.bashrc && source ~/.bashrc
 ```
 
-Read the [usage guide](https://shadow.github.io/docs/guide) or get started with some [example simulations](https://shadow.github.io/docs/guide/getting_started_basic.html).
+## Correr o monitor
+Para correr o monitor, a partir da pasta do Shadow, executamos os seguintes comandos:
+```
+cd zermia_monitor
+cargo run
+```
 
-<!--- ANCHOR: body (for mdbook) -->
+## Correr uma experiência
+Para correr uma experiência, vamos à pasta joao-hugo-exemplos, e lemos o README dessa experiência.
+
+
 
 ## What is Shadow?
 

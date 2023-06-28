@@ -49,14 +49,14 @@ fn treat_call(message: &Message) -> i32 { // Usamos para dont_receive
 
     SYSCALL_SENDTO => {
       println!("sendto");
-      unsafe {
-        CNT += 1;
-      //   // println!("Call to sendto num: {}", CNT);
-        if CNT == 3 {
-          breakit = true;
-          return 6;
-        }
-      }
+      // unsafe {
+      //   CNT += 1;
+      // //   // println!("Call to sendto num: {}", CNT);
+      //   if CNT == 3 {
+      //     breakit = true;
+      //     return 6;
+      //   }
+      // }
     }
 
     SYSCALL_RCVFROM => {
