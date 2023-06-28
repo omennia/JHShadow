@@ -3,7 +3,7 @@ No C foi mais simples:
 
 Comando para compilação do nosso programa:
 ```bash
-gcc -L/home/hugocardante/JHShadow/build/src/target/release -l:libzermia_lib.so -o c_program c_program.c
+gcc -o c_program c_program.c -L/home/hugocardante/JHShadow/build/src/target/release -l:libzermia_lib.so
 ```
 
 Em que passamos o path para a biblioteca no target, e depois passamos -l:nome_da_biblioteca.
