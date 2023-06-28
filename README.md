@@ -40,7 +40,9 @@ cargo run
 
 ## Correr uma experiência
 Para correr uma experiência, vamos à pasta joao-hugo-exemplos, e lemos o README dessa experiência.
-
+```
+cd joao-hugo-exemplos
+```
 
 
 ## What is Shadow?
