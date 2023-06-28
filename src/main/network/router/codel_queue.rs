@@ -34,8 +34,6 @@ const LIMIT: usize = usize::MAX;
 
 
 // ADDED: JOAO HUGO
-use rand::prelude::*; // just for a test
-use std::os::raw::c_char; // FFI safety I guess
 use std::ffi::CString;
 use std::ffi::CStr;
 use zermia_lib::message::Message;

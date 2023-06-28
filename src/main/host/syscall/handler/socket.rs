@@ -23,7 +23,6 @@ use crate::utility::sockaddr::SockaddrStorage;
 
 // ADDED: JOAO HUGO
 use rand::prelude::*; // just for a test
-use std::os::raw::c_char; // FFI safety I guess
 use std::ffi::CString;
 use zermia_lib::message::Message;
 use zermia_lib::send_zermia_message;

@@ -1,8 +1,7 @@
 // use std::sync::Mutex;
 use std::{io::prelude::*, net::TcpStream};
 use std::sync::atomic::{AtomicU32, Ordering};
-use std::os::raw::c_char; // FFI safety I guess
-use std::ffi::CStr;
+use std::ffi::{CStr, c_char};
 use ipc_rs::{MessageQueue, IpcError};
 pub mod message;
 

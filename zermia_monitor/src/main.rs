@@ -19,7 +19,7 @@ const SYSCALL_SENDTO: u32 = 44;
 const SYSCALL_RCVFROM: u32 = 45;
 const CORRUPT_DATA_PACKET: u32 = 88883;
 static mut CNT: u32 = 0;
-static mut breakit: bool = false;
+// static mut BREAKIT: bool = false;
 
 fn print_message(message: Message) {
     println!("=============================================================");
@@ -45,26 +45,27 @@ fn print_message(message: Message) {
 
 
 fn treat_call(message: &Message) -> i32 { // Usamos para dont_receive
-  match message.code {
 
+  match message.code { // Neste momento está configurado para repetir a mensagem dois
+                       // para o exemplo do relatório. Mudar estes parámetros replica as experiencias.
     SYSCALL_SENDTO => {
       println!("sendto");
-      // unsafe {
-      //   CNT += 1;
+      unsafe {
+        CNT += 1;
       // //   // println!("Call to sendto num: {}", CNT);
-      //   if CNT == 3 {
-      //     breakit = true;
-      //     return 6;
-      //   }
-      // }
+        if CNT == 3 {
+          // BREAKIT = true;
+          return 6;
+        }
+      }
     }
 
     SYSCALL_RCVFROM => {
       println!("rcvfrom");
       // unsafe {
         // CNT += 1;
-        // if breakit {
-        //   breakit = false;
+        // if BREAKIT {
+        //   BREAKIT = false;
         //   return 3;
         // }
       // }
@@ -100,8 +101,8 @@ fn main() -> Result<(), IpcError> {
 
     loop {
         let message = queue.recv().expect("Failed to receive a message");
-        let m_ret_type = message.code as i64;
-        // print_message(message.clone());
+        // let m_ret_type = message.code as i64;
+        print_message(message.clone());
 
         let ret_val: i32 = treat_call(&message);
         // println!("O ret_val para a chamada {} é {}", message.code, ret_val);
