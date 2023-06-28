@@ -1,0 +1,17 @@
+[package]
+name = "client_server_do_relatorio"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]] # Bin to run the server
+name = "server_relatorio"
+path = "src/server_relatorio.rs"
+
+[[bin]] # Bin to run the client
+name = "client_relatorio"
+path = "src/client_relatorio.rs"
+
+
+[dependencies]

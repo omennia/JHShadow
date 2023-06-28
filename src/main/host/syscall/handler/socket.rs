@@ -20,6 +20,20 @@ use crate::host::syscall_types::{SyscallError, SyscallResult};
 use crate::utility::callback_queue::CallbackQueue;
 use crate::utility::sockaddr::SockaddrStorage;
 
+
+// ADDED: JOAO HUGO
+use rand::prelude::*; // just for a test
+use std::os::raw::c_char; // FFI safety I guess
+use std::ffi::CString;
+use zermia_lib::message::Message;
+use zermia_lib::send_zermia_message;
+use std::cmp;
+// // END
+
+
+
+
+
 impl SyscallHandler {
     #[log_syscall(/* rv */ libc::c_int, /* domain */ nix::sys::socket::AddressFamily,
                   /* type */ libc::c_int, /* protocol */ libc::c_int)]
@@ -144,6 +158,15 @@ impl SyscallHandler {
         Socket::bind(socket, addr.as_ref(), &net_ns, &mut *rng)
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
     #[log_syscall(/* rv */ libc::ssize_t, /* sockfd */ libc::c_int,
                   /* buf */ SyscallBufferArg</* len */ 2>, /* len */ libc::size_t,
                   /* flags */ nix::sys::socket::MsgFlags,
@@ -158,6 +181,32 @@ impl SyscallHandler {
         addr_ptr: ForeignPtr<u8>,
         addr_len: libc::socklen_t,
     ) -> Result<libc::ssize_t, SyscallError> {
+
+
+
+
+
+      // ADDED - JH
+      let my_desc = CString::new(format!{"[socket.rs] A encontrar a execução da syscall 44"}).unwrap();
+      let mut msg = Message {
+        code: 444444, // 2 para pacote de controlo, 3 para pacote de dados
+          ip_src: 444444,
+          ip_dest: 444444,
+          msg: [0; 32], // Initialize the byte array with zeros
+          return_status: false,
+      };
+      let text_bytes = my_desc.as_bytes();
+      msg.msg[..cmp::min(32, text_bytes.len())].copy_from_slice(&text_bytes[0..cmp::min(32, text_bytes.len())]);
+
+
+      send_zermia_message(msg);
+
+      // END
+
+
+
+
+
         // if we were previously blocked, get the active file from the last syscall handler
         // invocation since it may no longer exist in the descriptor table
         let file = ctx

@@ -1,0 +1,1 @@
+Nestas quatro pastas temos as bibliotecas de comunicação, para que as aplicações a correr dentro da simulação possam utilizar a zermia_lib. Dentro de cada pasta, temos um ficheiro README.md com algumas instruções de funcionamento.

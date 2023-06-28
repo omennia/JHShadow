@@ -35,6 +35,26 @@
 #include "main/utility/priority_queue.h"
 #include "main/utility/utility.h"
 
+
+//ADDED: Hugo & Joao
+#include "lib/zermia_lib/src/zermia_lib.h"
+
+bool send_new_struct_tpc(const Host* host, const char* message, in_addr_t src_ip, in_addr_t dst_ip, int code){
+    Message msg = new_message(); // Creating a new message
+    msg.code = code;
+    memset(msg.msg, 0, sizeof(msg.msg));
+    memcpy(msg.msg, message, strlen(message));
+    msg.ip_src = src_ip;
+    msg.ip_dest = dst_ip;
+
+    int res = send_zermia_message(msg);
+    if(res == 0) return true;
+    return false;
+}
+// END
+
+
+
 enum TCPState {
     TCPS_CLOSED, TCPS_LISTEN,
     TCPS_SYNSENT, TCPS_SYNRECEIVED, TCPS_ESTABLISHED,
@@ -807,6 +827,15 @@ static gsize _tcp_getBufferSpaceIn(TCP* tcp) {
 static void _tcp_bufferPacketOut(TCP* tcp, Packet* packet) {
     MAGIC_ASSERT(tcp);
 
+    // ADDED - JH
+    // if(packet_get_to_drop_out(packet)){
+    //   printf("We dropped the packet out...");
+    //   packet_unref(packet);
+    //   return;
+    //   // burn_packet_order(packet);
+    // }
+    // END
+
     if(!priorityqueue_find(tcp->throttledOutput, packet)) {
         /* TCP wants to avoid congestion */
         priorityqueue_push(tcp->throttledOutput, packet);
@@ -824,6 +853,14 @@ static void _tcp_bufferPacketOut(TCP* tcp, Packet* packet) {
 
 static void _tcp_bufferPacketIn(TCP* tcp, Packet* packet) {
     MAGIC_ASSERT(tcp);
+
+    // ADDED - JH
+    // if(packet_get_to_drop_in(packet)){
+    //   printf("We dropped the packet in...");
+    //   return;
+    //   // burn_packet_order(packet);
+    // }
+    // END
 
     // Don't store old packets whose data we already gave to the plugin.
     PacketTCPHeader* hdr = packet_getTCPHeader(packet);
@@ -1165,6 +1202,13 @@ static void _tcp_retransmitPacket(TCP* tcp, const Host* host, gint sequence) {
         return;
     }
 
+
+    // ADDED - JH
+    // if(packet_get_to_drop_in(packet) || packet_get_to_drop_out(packet)){
+    //   return;
+    // }
+    // END
+
     PacketTCPHeader* hdr = packet_getTCPHeader(packet);
 
     trace("retransmitting packet %d", sequence);
@@ -1273,7 +1317,7 @@ static void _tcp_flush(TCP* tcp, const Host* host) {
            _rswlog(tcp, "Retransmitting [%d, %d)\n", begin, end);
 
            for (uint32_t jdx = begin; jdx < end; ++jdx) {
-               // fprintf(stderr, "CW - %s Retransmitting %d @ %f, %zu lost ranges\n", tcp->super.boundString, jdx, dtime, num_lost_ranges);
+               fprintf(stderr, "CW - %s Retransmitting %d @ %f, %zu lost ranges\n", tcp->super.boundString, jdx, dtime, num_lost_ranges); // Descomentei isto JH
                _tcp_retransmitPacket(tcp, host, jdx);
            }
 
@@ -1293,6 +1337,19 @@ static void _tcp_flush(TCP* tcp, const Host* host) {
     while(!priorityqueue_isEmpty(tcp->throttledOutput)) {
         /* get the next throttled packet, in sequence order */
         Packet* packet = priorityqueue_peek(tcp->throttledOutput);
+
+        // ADDED - JH
+        // if(packet_get_to_drop_in(packet) || packet_get_to_drop_out(packet)){
+        //   PacketTCPHeader* header = packet_getTCPHeader(packet);
+        //   gsize length = packet_getPayloadSize(packet);
+        //   priorityqueue_pop(tcp->throttledOutput);
+        //   tcp->throttledOutputLength -= length;
+        //   tcp->info.lastDataSent = now; //pretend game
+        //   tcp->send.packetsSent++;
+        //   tcp->send.highestSequence = (guint32)MAX(tcp->send.highestSequence, (guint)header->sequence);
+        //   continue;
+        // }
+        // END
 
         /* break out if we have no packets left */
         if(!packet) {
@@ -1343,6 +1400,8 @@ static void _tcp_flush(TCP* tcp, const Host* host) {
 
         PacketTCPHeader* header = packet_getTCPHeader(packet);
 
+
+
         _rswlog(tcp, "I just received packet %d\n", header->sequence);
         if (header->sequence < tcp->receive.next) {
             // This is a (probably retransmitted) copy of a packet we already stored
@@ -1352,6 +1411,18 @@ static void _tcp_flush(TCP* tcp, const Host* host) {
             tcp->unorderedInputLength -= packet_getPayloadSize(packet);
             packet_unref(packet);
         } else if (header->sequence == tcp->receive.next) {
+
+            // ADDED - JH
+            // if(packet_get_to_drop_in(packet) || packet_get_to_drop_out(packet)){
+            //     tcp->receive.lastSequence = header->sequence;
+            //     priorityqueue_pop(tcp->unorderedInput);
+            //     tcp->unorderedInputLength -= packet_getPayloadSize(packet);
+            //     packet_unref(packet);
+            //     (tcp->receive.next)++;
+            //     continue;
+            // }
+            // END
+
             /* move from the unordered buffer to user input buffer */
             gboolean fitInBuffer = legacysocket_addToInputBuffer(&(tcp->super), host, packet);
 
@@ -1976,8 +2047,13 @@ static void _tcp_sendACKTaskCallback(const Host* host, gpointer voidTcp, gpointe
 
 /* return TRUE if the packet should be retransmitted */
 static void _tcp_processPacket(LegacySocket* socket, const Host* host, Packet* packet) {
+    
     TCP* tcp = _tcp_fromLegacyFile((LegacyFile*)socket);
     MAGIC_ASSERT(tcp);
+
+    // if(packet_get_to_drop_in(packet) || packet_get_to_drop_out(packet)){
+    //   return;
+    // }
 
     /* fetch the TCP info from the packet */
     gsize packetLength = packet_getPayloadSize(packet);
@@ -2371,6 +2447,23 @@ static void _tcp_endOfFileSignalled(TCP* tcp, enum TCPFlags flags) {
 gssize tcp_sendUserData(TCP* tcp, const Host* host, UntypedForeignPtr buffer, gsize nBytes,
                         in_addr_t ip, in_port_t port, const MemoryManager* mem) {
     MAGIC_ASSERT(tcp);
+  
+    // ADDED - JH
+    // printf("URGENTE VEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER: buffer.val: %p\n", (void*)buffer.val);
+    // printf("URGENTE VEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEER: nBytes: %zu\n", nBytes);
+
+    // in_addr_t sourceIP = tcp_getIP(tcp);
+    // in_addr_t destinationIP = tcp_getPeerIP(tcp);
+
+    // char *description = "calling tcp_sendUserData";
+
+    // bool should_send = true;
+    // should_send = send_new_struct_tpc(host, description, sourceIP, destinationIP, 999323);
+    // if(!should_send){
+    //   return 0;
+    // }
+    // END
+
 
     /* return 0 to signal close, if necessary */
     if(tcp->error & TCPE_SEND_EOF)
@@ -2408,10 +2501,66 @@ gssize tcp_sendUserData(TCP* tcp, const Host* host, UntypedForeignPtr buffer, gs
     while(remaining > 0) {
         gsize copyLength = MIN(maxPacketLength, remaining);
 
+      // ADDED - JH to CHECK
+        // in_addr_t sourceIP = tcp_getIP(tcp);
+        // in_addr_t destinationIP = tcp_getPeerIP(tcp);
+        // char *description = "CALLING tcp_sendUserData";
+        // bool should_send = send_new_struct_tpc(host, description, sourceIP, destinationIP, 23);
+        // if(!should_send){
+        //   break;
+        // }
+        //   // char *ip_str = "11.19.171.162";
+        //   // in_addr_t forbiden_ip;
+
+        //   // forbiden_ip = inet_addr(ip_str);
+
+        //   in_addr_t sourceIP = tcp_getIP(tcp);
+        //   in_addr_t destinationIP = tcp_getPeerIP(tcp);
+
+        //   bool should_send = true;
+        //   // if(forbiden_ip != sourceIP && forbiden_ip != destinationIP){
+        //     should_send = send_new_struct_tpc(host, "hello world", sourceIP, destinationIP, 2222);
+        //   // }
+        // //
+
+
+        // if (!should_send) {
+        //   trace("Packet creation stopped due to forbidden IP");
+        //   send_new_struct_tpc(host, "MAKING THE COUNT ADVANCE!!", sourceIP, destinationIP, 2345);
+        //   // remaining = 0;
+        //   // return -ENOTCONN;
+        //   remaining -= copyLength;
+        //   bytesCopied += copyLength;
+        //   continue;
+        // }
+
         /* use helper to create the packet */
         Packet* packet = _tcp_createDataPacket(tcp, host, PTCP_ACK,
                                                (UntypedForeignPtr){.val = buffer.val + bytesCopied},
                                                copyLength, mem);
+
+        // ADDED - JH
+        in_addr_t sourceIP = tcp_getIP(tcp);
+        in_addr_t destinationIP = tcp_getPeerIP(tcp);
+        char *description = "CALLING tcp_sendUserData";
+        char *my_msg = packet_get_payload(packet);
+
+        if(my_msg == NULL){
+          bool should_send = send_new_struct_tpc(host, description, sourceIP, destinationIP, 27);
+        }
+        else{
+          bool should_send = send_new_struct_tpc(host, my_msg, sourceIP, destinationIP, 28);
+
+          if(should_send){
+            packet_set_to_drop_in(packet, false);
+            packet_set_to_drop_out(packet, false);
+          }
+          else{
+            packet_set_to_drop_in(packet, true);
+            packet_set_to_drop_out(packet, true);
+          }
+        }
+        // END
 
         if(copyLength > 0) {
             /* we are sending more user data */
@@ -2525,6 +2674,30 @@ gssize tcp_receiveUserData(TCP* tcp, const Host* host, UntypedForeignPtr buffer,
             break;
         }
 
+
+        // ADDED - JH
+        // if (packet_get_to_drop_in(nextPacket) || packet_get_to_drop_out(nextPacket)) {
+        //   // Queremos que este packet não seja processado.. talvez funcione?
+        //   in_addr_t sourceIP = tcp_getIP(tcp);
+        //   in_addr_t destinationIP = tcp_getPeerIP(tcp);
+        //   char *description = "DETETAMOS UM PACOTE QUE VAI SER IGNORADO..";
+        //   char *my_msg = packet_get_payload(nextPacket);
+
+        //   if(my_msg == NULL){
+        //     bool should_send = send_new_struct_tpc(host, description, sourceIP, destinationIP, 27);
+        //   }
+        //   else{
+        //     bool should_send = send_new_struct_tpc(host, my_msg, sourceIP, destinationIP, 123456789);
+        //   }
+
+           
+        //    Packet* packet = legacysocket_removeFromInputBuffer((LegacySocket*)tcp, host);
+        //    packet_addDeliveryStatus(packet, PDS_RCV_SOCKET_DELIVERED);
+        //    packet_unref(packet);
+        
+        // } else {
+        // END
+
         gsize packetLength = packet_getPayloadSize(nextPacket);
         copyLength = MIN(packetLength, remaining);
         gssize bytesCopied = packet_copyPayloadWithMemoryManager(
@@ -2553,6 +2726,8 @@ gssize tcp_receiveUserData(TCP* tcp, const Host* host, UntypedForeignPtr buffer,
         /* we read the entire packet, and are now finished with it */
         packet_addDeliveryStatus(packet, PDS_RCV_SOCKET_DELIVERED);
         packet_unref(packet);
+
+        // } // APAGAR ESTE SE APAGARMOS O ELSE EM CIMA
     }
 
     bool more_readable_data = false;

@@ -1,0 +1,35 @@
+general:
+  stop_time: 300s
+  model_unblocked_syscall_latency: true
+  parallelism: 1
+  
+network:
+  graph:
+    type: 1_gbit_switch
+
+hosts:
+  host1:  
+    network_node_id: 0
+    processes:
+    - path: export LD_LIBRARY_PATH=/home/hugocardante/JHShadow/build/src/target/release:$LD_LIBRARY_PATH && ./c_program
+      start_time: 0s
+  host2:  
+    network_node_id: 0
+    processes:
+    - path: export LD_LIBRARY_PATH=/home/hugocardante/JHShadow/build/src/target/release:$LD_LIBRARY_PATH && ./c_program
+      start_time: 0s
+  host3:  
+    network_node_id: 0
+    processes:
+    - path: export LD_LIBRARY_PATH=/home/hugocardante/JHShadow/build/src/target/release:$LD_LIBRARY_PATH && ./c_program
+      start_time: 0s
+  host4:  
+    network_node_id: 0
+    processes:
+    - path: export LD_LIBRARY_PATH=/home/hugocardante/JHShadow/build/src/target/release:$LD_LIBRARY_PATH && ./c_program
+      start_time: 0s
+  host5:  
+    network_node_id: 0
+    processes:
+    - path: export LD_LIBRARY_PATH=/home/hugocardante/JHShadow/build/src/target/release:$LD_LIBRARY_PATH && ./c_program
+      start_time: 0s

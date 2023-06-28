@@ -109,4 +109,18 @@ PacketDeliveryStatusFlags packet_getDeliveryStatus(Packet* packet);
 
 gchar* packet_toString(Packet* packet);
 
+
+// ADDED - JH
+void packet_corrupt_payload(Packet* packet);
+void packet_erase_it(Packet* packet);
+char *packet_get_payload(Packet* packet);
+bool packet_get_to_drop_out(Packet* packet);
+bool packet_get_to_drop_in(Packet* packet);
+bool packet_get_to_corrupt(Packet* packet);
+void packet_set_to_drop_out(Packet* packet, bool state);
+void packet_set_to_drop_in(Packet* packet, bool state);
+void packet_set_to_corrupt(Packet* packet, bool state);
+void hugo_set_packet_free(Packet* packet);
+// END
+
 #endif /* SHD_PACKET_H_ */

@@ -1,0 +1,34 @@
+general:
+  stop_time: 300s
+  model_unblocked_syscall_latency: true
+  parallelism: 1
+  
+network:
+  graph:
+    type: 1_gbit_switch
+
+hosts:
+  host1:  
+    network_node_id: 0
+    processes:
+    - path: /usr/bin/java
+      args: -Duser.dir="/home/hugocardante/Documents/libraries/java" -Djava.library.path="/home/hugocardante/JHShadow/build/src/target/release" myJavaProgram
+      start_time: 0s
+  host2:  
+    network_node_id: 0
+    processes:
+    - path: /usr/bin/java
+      args: -Duser.dir="/home/hugocardante/Documents/libraries/java" -Djava.library.path="/home/hugocardante/JHShadow/build/src/target/release" myJavaProgram
+      start_time: 0s
+  host3:  
+    network_node_id: 0
+    processes:
+    - path: /usr/bin/java
+      args: -Duser.dir="/home/hugocardante/Documents/libraries/java" -Djava.library.path="/home/hugocardante/JHShadow/build/src/target/release" myJavaProgram
+      start_time: 0s
+  host4:  
+    network_node_id: 0
+    processes:
+    - path: /usr/bin/java
+      args: -Duser.dir="/home/hugocardante/Documents/libraries/java" -Djava.library.path="/home/hugocardante/JHShadow/build/src/target/release" myJavaProgram
+      start_time: 0s

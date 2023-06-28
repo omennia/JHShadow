@@ -11,8 +11,17 @@ use shadow_shim_helper_rs::rootedcell::rc::RootedRc;
 use shadow_shim_helper_rs::rootedcell::refcell::RootedRefCell;
 use shadow_shim_helper_rs::simulation_time::SimulationTime;
 use shadow_shim_helper_rs::HostId;
+use std::ffi::CStr;
 
-use std::os::raw::{c_char/* , c_int */}; // FFI safety I guess
+
+// ADDED: JOAO HUGO
+use rand::prelude::*; // just for a test
+use std::os::raw::c_char; // FFI safety I guess
+use std::ffi::CString;
+use zermia_lib::message::Message;
+use zermia_lib::send_zermia_message;
+use std::cmp;
+// // END
 
 use super::work::event_queue::EventQueue;
 use crate::core::controller::ShadowStatusBarState;
@@ -373,13 +382,92 @@ impl Worker {
         let src_ip = std::net::IpAddr::V4(src_ip);
         let dst_ip = std::net::IpAddr::V4(dst_ip);
 
-        println!("\nUm novo packet está a ser enviado de {:?} para {:?}", src_ip, dst_ip);
-        if payload_size == 0{
+        
+        // ADDED: JOAO HUGO
+        // let ip_dont_touch: std::net::Ipv4Addr = "11.19.171.162".parse().unwrap();
+        println!(
+            "\nUm novo packet está a ser enviado de {:?} para {:?}",
+            src_ip, dst_ip
+        );
+        if payload_size == 0 {
             println!("A payload size é 0 então é um packet de controlo\n");
+        } else {
+            println!(
+                "A payload size é {} então é um packet de dados\n",
+                payload_size
+            );
+        }
+
+        let my_desc = CString::new(format!{"[worker.rs] (DESCRIÇÃO) Um novo packet de {} está a ser enviado de {:?} para {:?}", if payload_size == 0 {"CONTROLO"} else {"DADOS"}, src_ip, dst_ip}).unwrap();
+        let mut msg = Message {
+          code: if payload_size == 0 {88882} else {88883}, // 2 para pacote de controlo, 3 para pacote de dados
+            ip_src: unsafe { cshadow::packet_getSourceIP(packet) },
+            ip_dest: unsafe { cshadow::packet_getDestinationIP(packet) },
+            msg: [0; 32], // Initialize the byte array with zeros
+            return_status: false,
+        };
+        
+        let my_msg = unsafe { cshadow::packet_get_payload(packet)}; 
+        if my_msg.is_null() {
+          println!("A mensagem é nula.");
+            let text_bytes = my_desc.as_bytes();
+            msg.msg[..cmp::min(32, text_bytes.len())].copy_from_slice(&text_bytes[0..cmp::min(32, text_bytes.len())]);
         }
         else{
-            println!("A payload size é {} então é um packet de dados\n", payload_size);
+          println!("VER ISTO IMPORTANTE:::::::::::::::::::::::::: {:?}", my_msg);
+          let my_msg_cstr = unsafe { CStr::from_ptr(my_msg) };
+          let my_msg_str = my_msg_cstr.to_str().unwrap();
+          let text_bytes = my_msg_str.as_bytes();
+                      msg.msg[..cmp::min(32, text_bytes.len())].copy_from_slice(&text_bytes[0..cmp::min(32, text_bytes.len())]);
+
         }
+
+        // if src_ip == ip_dont_touch || dst_ip == ip_dont_touch {
+        //   println!("São iguais: IP_DONT_TOUCH {}\nDST_IP {}\nSRC_IP{}", ip_dont_touch, dst_ip, src_ip);
+        //   msg.code = 101;
+        // }
+
+
+        let should_corrupt = send_zermia_message(msg);
+        println!("VER ISTO: SHOULD_CORRUPT = {}", should_corrupt);
+
+        // if src_ip == ip_dont_touch || dst_ip == ip_dont_touch{
+        //   println!("Neste nem tocamos..");
+        //   if should_corrupt == 0 /* tinha false antes */ {
+        //     println!("PERIGO! VER LINHA 435 do ficheiro worker.rs. Isto significa que o return value estará mal!!!!");
+        //   }
+        // }
+        // else 
+        if should_corrupt == 5 { // O código 5 representa que queremos corromper a mensagem
+          println!("TRYOUT...");
+          // println!("Neste momento estamos supostamente a alterar o payload..");
+          // if payload_size > 0 {
+          //   if rand::random() {
+              unsafe { cshadow::packet_corrupt_payload(packet) };
+              // unsafe { cshadow::packet_set_to_drop_out(packet, true) };
+              // unsafe { cshadow::packet_set_to_drop_in(packet, true) };
+          //   }
+          //   else {
+              // unsafe { 
+              //   cshadow::packet_erase_it(packet);
+              // }
+              // return;
+          //   }
+          // }
+
+          // unsafe {
+          //   cshadow::packet_addDeliveryStatus(
+          //       packet,
+          //       cshadow::_PacketDeliveryStatusFlags_PDS_INET_SENT,
+          //   )
+          // };
+          // return;
+        }
+        else{
+          println!("o Packet vai ser enviado normalmente");
+        }
+        // END
+
 
 
         // check if network reliability forces us to 'drop' the packet
@@ -432,7 +520,7 @@ impl Worker {
 
         Worker::with(|w| {
             w.shared
-                .push_packet_to_host(packet, dst_host_id, deliver_time, src_host)
+                .push_packet_to_host(packet, dst_host_id, deliver_time, src_host, true)
         })
         .unwrap();
     }
@@ -647,10 +735,15 @@ impl WorkerShared {
         dst_host_id: HostId,
         time: EmulatedTime,
         src_host: &Host,
+        //ADDED - JH
+        should_send: bool
+        //END
     ) {
         let event = Event::new_packet(packet, time, src_host);
         let event_queue = self.event_queues.get(&dst_host_id).unwrap();
-        event_queue.lock().unwrap().push(event);
+        if should_send {
+          event_queue.lock().unwrap().push(event);
+        }
     }
 }
 

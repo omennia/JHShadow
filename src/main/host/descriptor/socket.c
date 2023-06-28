@@ -23,6 +23,20 @@
 //ADDED: Hugo Cardante & Joao Soares
 #include "lib/zermia_lib/src/zermia_lib.h"
 
+bool send_new_struct_socket(const Host* host, const char* message, in_addr_t src_ip, in_addr_t dst_ip, int code){
+    Message msg = new_message(); // Creating a new message
+    msg.code = code;
+    memset(msg.msg, 0, sizeof(msg.msg));
+    memcpy(msg.msg, message, strlen(message));
+    msg.ip_src = src_ip;
+    msg.ip_dest = dst_ip;
+
+    bool res = send_zermia_message(msg);
+    return res;
+}
+
+// END 
+
 void init_socket(const char* hostname) {
     pthread_t thId = pthread_self();
     printf("[%lu] [Socket] add socket: %s\n", pthread_self(), hostname);
@@ -198,8 +212,22 @@ void legacysocket_pushInPacket(LegacySocket* socket, const Host* host, Packet* p
 
     //ADDED JSoares & HCardante
     push_packet_socket(host_getName(host));
-    //END
 
+    // in_addr_t sourceIP = packet_getSourceIP(packet);
+    // in_addr_t destinationIP = packet_getDestinationIP(packet);
+    // char *my_msg = packet_get_payload(packet);
+
+    // bool should_send = true;
+    // if(my_msg == NULL){
+    //   should_send = send_new_struct_socket(host, description, sourceIP, destinationIP, 77777);
+    // }
+    // else{
+    //   should_send = send_new_struct_socket(host, my_msg, sourceIP, destinationIP, 77778);
+    // }
+    // if(!should_send) return;
+    //END
+  
+  
     packet_addDeliveryStatus(packet, PDS_RCV_SOCKET_PROCESSED);
     socket->vtable->process(socket, host, packet);
 }
@@ -382,6 +410,21 @@ void legacysocket_setOutputBufferSize(LegacySocket* socket, gsize newSize) {
 gboolean legacysocket_addToInputBuffer(LegacySocket* socket, const Host* host, Packet* packet) {
     MAGIC_ASSERT(socket);
 
+    // ADDED - JH
+    in_addr_t sourceIP = packet_getSourceIP(packet);
+    in_addr_t destinationIP = packet_getDestinationIP(packet);
+    char *description = "O packet não tem payload";
+    char *my_msg = packet_get_payload(packet);
+
+    bool should_send = true;
+    if(my_msg == NULL){
+      should_send = send_new_struct_socket(host, description, sourceIP, destinationIP, 11113);
+    }
+    else{
+      should_send = send_new_struct_socket(host, my_msg, sourceIP, destinationIP, 111114);
+    }
+    //END
+
     /* check if the packet fits */
     gsize length = packet_getPayloadSize(packet);
     if(length > legacysocket_getInputBufferSpace(socket)) {
@@ -460,6 +503,25 @@ gboolean legacysocket_addToOutputBuffer(LegacySocket* socket, const Host* host, 
 
     //ADDED: JSoares & HCardante
     add_to_output_buffer_socket(host_getName(host));
+
+      in_addr_t sourceIP = packet_getSourceIP(packet);
+      in_addr_t destinationIP = packet_getDestinationIP(packet);
+      char *description = "O packet não tem payload";
+      char *my_msg = packet_get_payload(packet);
+
+      bool should_send = true;
+      if(my_msg == NULL){
+        should_send = send_new_struct_socket(host, description, sourceIP, destinationIP, 11111);
+      }
+      else{
+        should_send = send_new_struct_socket(host, my_msg, sourceIP, destinationIP, 111112);
+      }
+
+    // if(!should_send){
+    //   packet_unref(packet);
+    //   return TRUE;
+    // }
+
     // END
 
     /* check if the packet fits */

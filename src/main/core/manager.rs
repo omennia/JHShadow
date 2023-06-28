@@ -28,6 +28,8 @@ use crate::network::graph::{IpAssignment, RoutingInfo};
 use crate::utility::childpid_watcher::ChildPidWatcher;
 use crate::utility::status_bar::Status;
 use crate::utility::{self, SyncSendPointer};
+use zermia_lib::message::Message;
+use zermia_lib::send_zermia_message;
 
 pub struct Manager<'a> {
     manager_config: Option<ManagerConfig>,
@@ -529,6 +531,21 @@ impl<'a> Manager<'a> {
             let stats_filename = self.data_path.clone().join("sim-stats.json");
             sim_stats::write_stats_to_file(&stats_filename, stats)
         })?;
+
+
+        // ADDED - JH
+        {
+          let msg = Message {
+              code: 9999, // ending simulation
+              ip_src: 0,
+              ip_dest: 0,
+              return_status: false,
+              msg: [0; 32],
+          };
+          send_zermia_message(msg);
+        }
+        // END
+
 
         Ok(num_plugin_errors)
     }

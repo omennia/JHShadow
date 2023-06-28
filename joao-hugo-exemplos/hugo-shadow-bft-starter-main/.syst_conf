@@ -28,7 +28,7 @@ system.totalordermulticast.checkpoint_period = 1024
 system.totalordermulticast.global_checkpoint_period = 120000
 system.totalordermulticast.checkpoint_to_disk = false
 system.totalordermulticast.sync_ckp = false
-system.totalordermulticast.maxBatchSizeInBytes = 999999999
+system.totalordermulticast.maxBatchSizeInBytes = 999999
 system.totalordermulticast.maxbatchsize = 1000
 system.totalordermulticast.timeout = 2000
 
@@ -42,12 +42,11 @@ system.shutdownhook = true
 system.samebatchsize = false
 system.numrepliers = 16
 system.bft = true
+
 system.initial.view = 0,1,2,3
 
 system.servers.num = 4
 system.servers.f = 0
 
 system.client.invokeOrderedTimeout = 40
-
-
 

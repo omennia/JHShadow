@@ -528,6 +528,14 @@ SyscallReturn syscallhandler_make_syscall(SysCallHandler* sys, const SysCallArgs
             NATIVE(setuid);
             NATIVE(setxattr);
             NATIVE(stat);
+
+            // ADDED - JH
+            NATIVE(msgget);
+            NATIVE(msgsnd);
+            NATIVE(msgrcv);
+            NATIVE(msgctl);
+            // END
+
 #ifdef SYS_stat64
             NATIVE(stat64);
 #endif

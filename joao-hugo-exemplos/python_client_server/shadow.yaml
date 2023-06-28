@@ -1,0 +1,30 @@
+general:
+  log_level: error #error warning info debug trace
+  stop_time: 3s
+  parallelism: 1
+  progress: false
+  model_unblocked_syscall_latency: true # Isto tem de estar a false
+
+network:
+  graph:
+    type: 1_gbit_switch
+
+hosts:
+  server:
+    ip_addr: 11.19.171.162
+    network_node_id: 0
+    options:
+      log_level: error
+    processes:
+      - path: python3
+        args: ../../../server.py 11.19.171.162 8888
+        start_time: 1s
+  client:
+    network_node_id: 0
+    options:
+      log_level: error
+    quantity: 1
+    processes:
+      - path: python3
+        args: ../../../client.py server 8888
+        start_time: 2s

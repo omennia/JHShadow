@@ -31,4 +31,11 @@ gssize payload_getDataWithMemoryManager(Payload* payload, gsize offset,
 gsize payload_getDataShadow(Payload* payload, gsize offset, void* destBuffer,
                             gsize destBufferLength);
 
+
+// ADDED - JH
+guint8 payload_get_data_byte(Payload* payload, gsize index);
+gboolean payload_set_data_byte(Payload* payload, guint8 new_byte_value, gsize index);
+
+// END
+
 #endif /* SRC_MAIN_ROUTING_SHD_PAYLOAD_H_ */

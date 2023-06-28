@@ -1,9 +1,9 @@
 # Simulations settings #########################################
 
-HOME_DIR: /home/red/hugo-shadow-bft-starter
-TARGET: /home/red/hugo-shadow-bft-starter/results
-SHADOW_DIR: /home/red/shadow
-BFT_SMART_DIR: /home/red/hugo-shadow-bft-starter/library
+HOME_DIR: /home/hugocardante/JHShadow/joao-hugo-exemplos/hugo-shadow-bft-starter-main
+TARGET: /home/hugocardante/JHShadow/joao-hugo-exemplos/hugo-shadow-bft-starter-main/results
+SHADOW_DIR: /home/hugocardante/shadow
+BFT_SMART_DIR: /home/hugocardante/JHShadow/joao-hugo-exemplos/hugo-shadow-bft-starter-main/library
 NUMBER_OF_NODES: 7
 NUMBER_OF_REPLICAS: 4
 NUMBER_OF_CLIENTS: 3
@@ -42,7 +42,7 @@ NUMBER_OF_CLIENTS: 3
 # TOTAL_ORDER_MULTICAST global_checkpoint_period: 120000
 # TOTAL_ORDER_MULTICAST checkpoint_to_disk: false
 # TOTAL_ORDER_MULTICAST sync_ckp: false
-TOTAL_ORDER_MULTICAST maxBatchSizeInBytes: 9999
+TOTAL_ORDER_MULTICAST maxBatchSizeInBytes: 999999
 # TOTAL_ORDER_MULTICAST maxbatchsize: 1000
 # TOTAL_ORDER_MULTICAST timeout: 2000
 

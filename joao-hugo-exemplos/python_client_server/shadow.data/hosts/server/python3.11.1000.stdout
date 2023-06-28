@@ -1,0 +1,11 @@
+Starting server
+Starting server
+('11.19.171.162', 8888)
+O resultado da chamada à função é: False
+socket binded to port 8888
+socket is listening
+Connected to : 11.0.0.1 : 63184
+Received b'My first message: 2000-01-01 00:00:02.002802'
+Received b'My second message: 2000-01-01 00:00:02.004829My second message: 2000-01-01 00:00:02.004829'
+Received b'My third message: 2000-01-01 00:00:02.006833'
+Received b'My fourth message: 2000-01-01 00:00:02.008837'

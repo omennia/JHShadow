@@ -212,6 +212,7 @@ fn run_bindgen(build_common: &ShadowBuildCommon) {
         .allowlist_function("worker_.*")
         .allowlist_function("workerc_.*")
         .allowlist_function("packet_.*")
+        .allowlist_function("packet_corrupt_payload")
         //# Needs GQueue
         .blocklist_function("worker_finish")
         .blocklist_function("worker_bootHosts")

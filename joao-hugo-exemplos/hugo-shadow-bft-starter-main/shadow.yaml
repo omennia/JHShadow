@@ -1,0 +1,98 @@
+general:
+  stop_time: 9000 s
+  data_directory: /home/hugocardante/JHShadow/joao-hugo-exemplos/hugo-shadow-bft-starter-main/results
+  parallelism: 20
+experimental:
+  use_legacy_working_dir: true
+  runahead: 630 us
+network:
+  graph:
+    type: gml
+    file:
+      path: network.gml
+  use_shortest_path: false
+hosts:
+  replica0:
+    ip_addr: 11.39.5.6
+    network_node_id: 0
+    processes:
+      - path: /usr/bin/java
+        environment: ''
+        args: >-
+          -Djava.security.properties=config/java.security
+          -Dlogback.configurationFile=config/logback.xml -cp lib/* -Xmx500m
+          bftsmart.demo.microbenchmarks.ThroughputLatencyServer 0 2000 0 0 false
+          nosig
+        start_time: 0 s
+  replica1:
+    ip_addr: 11.191.27.222
+    network_node_id: 1
+    processes:
+      - path: /usr/bin/java
+        environment: ''
+        args: >-
+          -Djava.security.properties=config/java.security
+          -Dlogback.configurationFile=config/logback.xml -cp lib/* -Xmx500m
+          bftsmart.demo.microbenchmarks.ThroughputLatencyServer 1 2000 0 0 false
+          nosig
+        start_time: 1 s
+  replica2:
+    ip_addr: 11.14.99.97
+    network_node_id: 2
+    processes:
+      - path: /usr/bin/java
+        environment: ''
+        args: >-
+          -Djava.security.properties=config/java.security
+          -Dlogback.configurationFile=config/logback.xml -cp lib/* -Xmx500m
+          bftsmart.demo.microbenchmarks.ThroughputLatencyServer 2 2000 0 0 false
+          nosig
+        start_time: 2 s
+  replica3:
+    ip_addr: 11.239.80.64
+    network_node_id: 3
+    processes:
+      - path: /usr/bin/java
+        environment: ''
+        args: >-
+          -Djava.security.properties=config/java.security
+          -Dlogback.configurationFile=config/logback.xml -cp lib/* -Xmx500m
+          bftsmart.demo.microbenchmarks.ThroughputLatencyServer 3 2000 0 0 false
+          nosig
+        start_time: 3 s
+  client0:
+    ip_addr: 11.32.151.88
+    network_node_id: 4
+    processes:
+      - path: /usr/bin/java
+        environment: ''
+        args: >-
+          -Djava.security.properties=config/java.security
+          -Dlogback.configurationFile=config/logback.xml -cp lib/* -Xmx500m
+          bftsmart.demo.microbenchmarks.AsyncLatencyClient 7000 1 20000 0 0
+          false true nosig
+        start_time: 64 s
+  client1:
+    ip_addr: 11.67.45.130
+    network_node_id: 5
+    processes:
+      - path: /usr/bin/java
+        environment: ''
+        args: >-
+          -Djava.security.properties=config/java.security
+          -Dlogback.configurationFile=config/logback.xml -cp lib/* -Xmx500m
+          bftsmart.demo.microbenchmarks.AsyncLatencyClient 8000 1 20000 0 0
+          false true nosig
+        start_time: 64 s
+  client2:
+    ip_addr: 11.138.143.101
+    network_node_id: 6
+    processes:
+      - path: /usr/bin/java
+        environment: ''
+        args: >-
+          -Djava.security.properties=config/java.security
+          -Dlogback.configurationFile=config/logback.xml -cp lib/* -Xmx500m
+          bftsmart.demo.microbenchmarks.AsyncLatencyClient 9000 1 20000 0 0
+          false true nosig
+        start_time: 64 s

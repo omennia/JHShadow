@@ -2,7 +2,7 @@
 
 
 echo "Compiling Monitor, Server and Client..."
-cargo build --manifest-path /home/shadow-starter/JHShadow/joao-hugo-exemplos/simple_tcp_server_client/project-tonic/Cargo.toml
+cargo build --manifest-path /home/${USER}/JHShadow/joao-hugo-exemplos/simple_tcp_server_client/project-tonic/Cargo.toml
 
 
 

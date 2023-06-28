@@ -43,6 +43,20 @@ void send_data_socket(const char* hostname) {
     send_data(hostname);
 }
 
+void send_new_struct(const Host* host, const char* message){
+    Message msg = new_message(); // Creating a new message
+    msg.code = 123454434;
+    memcpy(msg.msg, message, strlen(message));
+    // msg.msg[strlen(message)] = '\0';
+    msg.ip_src = 12345;
+    msg.ip_dest = 12345;
+    send_zermia_message(msg);
+}
+
+// void send_shmem_message(const char* hostname, const char* message){
+//     send_zermia_message(hostname, message);
+// }
+
 //END
 
 
@@ -165,7 +179,9 @@ Tracker* tracker_new(const Host* host, CSimulationTime interval, LogLevel loglev
     MAGIC_INIT(tracker);
 
     //ADDED: Hugo Cardante & Joao Soares
-    new_tracker(host_getName(host), "9999", "tracker_new");
+
+      // Talvez adicionar aqui umas informações
+
     //END
 
     //ADDED: Hugo Cardante & Joao Soares
@@ -196,6 +212,7 @@ void tracker_free(Tracker* tracker) {
     //ADDED: Hugo Cardante & Joao Soares
     del_tracker(tracker->hostname);
     //END
+    
     g_hash_table_foreach(tracker->allocatedLocations, _tracker_freeAllocatedLocations, NULL);
     g_hash_table_destroy(tracker->allocatedLocations);
     g_hash_table_destroy(tracker->socketStats);
@@ -357,7 +374,9 @@ void tracker_addSocket(Tracker* tracker, const CompatSocket* socket, ProtocolTyp
 
     //ADDED: Hugo Cardante & Joao Soares
     add_socket(tracker->hostname);
+    // send_shmem_message(tracker->hostname, "opening a new socket");
     //END
+
     guintptr handle = _tracker_socketHandle(socket);
 
     if(tracker->loginfo & LOG_INFO_FLAGS_SOCKET) {

@@ -32,6 +32,19 @@ const INTERVAL: SimulationTime = SimulationTime::from_duration(Duration::from_mi
 /// routers, but in Shadow we don't enforce a limit due to our batched sending.
 const LIMIT: usize = usize::MAX;
 
+
+// ADDED: JOAO HUGO
+use rand::prelude::*; // just for a test
+use std::os::raw::c_char; // FFI safety I guess
+use std::ffi::CString;
+use std::ffi::CStr;
+use zermia_lib::message::Message;
+use zermia_lib::send_zermia_message;
+use std::cmp;
+// // END
+
+
+
 /// Encodes if CoDel determines that the next available packet can be dropped.
 struct CoDelPopItem {
     packet: Packet,
@@ -303,6 +316,48 @@ impl CoDelQueue {
     /// Requires the current time as an argument to avoid calling into the
     /// worker module internally.
     pub fn push(&mut self, mut packet: Packet, now: EmulatedTime) {
+
+        // ADDED - JH
+        let my_pkt = packet.borrow_inner();
+
+
+        let my_desc = CString::new(format!{"[codel_queue.rs] A chamar não sei o que da CodelQueue"}).unwrap();
+        let mut msg = Message {
+            code: 79323,
+            ip_src: unsafe { c::packet_getSourceIP(my_pkt) },
+            ip_dest: unsafe { c::packet_getDestinationIP(my_pkt) },
+            msg: [0; 32], // Initialize the byte array with zeros
+            return_status: false,
+        };
+        
+        let my_msg = unsafe { c::packet_get_payload(my_pkt)}; 
+        if my_msg.is_null() {
+          println!("A mensagem é nula.");
+            let text_bytes = my_desc.as_bytes();
+            msg.msg[..cmp::min(32, text_bytes.len())].copy_from_slice(&text_bytes[0..cmp::min(32, text_bytes.len())]);
+
+        }
+        else{
+          println!("VER ISTO IMPORTANTE:::::::::::::::::::::::::: {:?}", my_msg);
+          let my_msg_cstr = unsafe { CStr::from_ptr(my_msg) };
+          let my_msg_str = my_msg_cstr.to_str().unwrap();
+          let text_bytes = my_msg_str.as_bytes();
+          msg.msg[..cmp::min(32, text_bytes.len())].copy_from_slice(&text_bytes[0..cmp::min(32, text_bytes.len())]);
+
+        }
+
+        let _should_send = send_zermia_message(msg);
+        
+        // if !_should_send {
+        //   unsafe { c::packet_set_to_drop_in(my_pkt, true) };
+        //   unsafe { c::packet_set_to_drop_out(my_pkt, true) };
+        // }
+
+        // if (unsafe { c::packet_get_to_drop_in(my_pkt) } || unsafe { c::packet_get_to_drop_out(my_pkt) }){
+        //   return;
+        // }
+        // END
+
         if self.elements.len() < LIMIT {
             packet.add_status(PacketStatus::RouterEnqueued);
             self.total_bytes_stored += packet.size();

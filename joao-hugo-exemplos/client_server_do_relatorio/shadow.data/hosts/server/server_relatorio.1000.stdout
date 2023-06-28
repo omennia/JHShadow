@@ -1,0 +1,8 @@
+A começar o servidor no endereço 11.19.171.162:8888
+Conexão entre o servidor e o cliente estabelecida:
+	 TcpStream { addr: 11.19.171.162:8888, peer: 11.0.0.1:11404, fd: 4 }
+
+Conexão a chegar de: 11.0.0.1:11404
+Vamos devolver esta mensagem: MENSAGEM 1
+Vamos devolver esta mensagem: MENSAGEM 2MENSAGEM 2
+Vamos devolver esta mensagem: MENSAGEM 3

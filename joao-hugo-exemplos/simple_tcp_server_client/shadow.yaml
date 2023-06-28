@@ -1,6 +1,7 @@
 general:
-  stop_time: 300000s
+  stop_time: 30s
   model_unblocked_syscall_latency: false # Isto tem de estar a false
+  parallelism: 8
   
 network:
   graph:
@@ -24,7 +25,7 @@ hosts:
       start_time: 1s
   client:
     network_node_id: 0
-    quantity: 3
+    quantity: 1
     processes:
     - path: h_client
       args: server

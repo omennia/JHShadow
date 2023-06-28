@@ -673,11 +673,11 @@ impl Host {
             Worker::set_current_time(event.time());
             self.continue_execution_timer();
             match event.data() {
-                EventData::Packet(data) => {
-                    self.upstream_router_borrow_mut()
-                        .route_incoming_packet(data.into());
-                    self.notify_router_has_packets();
-                }
+              EventData::Packet(data) => {
+                  self.upstream_router_borrow_mut()
+                      .route_incoming_packet(data.into());
+                  self.notify_router_has_packets();
+              }
                 EventData::Local(data) => TaskRef::from(data).execute(self),
             }
             self.stop_execution_timer();

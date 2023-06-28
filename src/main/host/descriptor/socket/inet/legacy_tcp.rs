@@ -382,6 +382,13 @@ impl LegacyTcpSocket {
                 })
                 .unwrap();
 
+                // ADDED - JH
+                // if rv == -1 {
+                //   return Ok(0);
+                // }
+                //
+
+
                 if rv < 0 {
                     if bytes_sent == 0 {
                         return Err(Errno::from_i32(-rv as i32));

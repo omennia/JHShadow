@@ -1,0 +1,10 @@
+Starting client
+Connecting to server
+('server', 8888)
+O resultado da chamada à função é: False
+Received from the server : 208200.20:00:00 10-10-0002 :egassem tsrif yM
+Received from the server : 928400.20:00:00 10-10-0002 :egassem dnoces yM928400.20:00:00 10-10-0002 :egassem dnoces yM
+Received from the server : 338600.20:00:00 10-10-0002 :egassem driht yM
+Received from the server : 738800.20:00:00 10-10-0002 :egassem htruof yM
+Disconnecting from server
+Ending client

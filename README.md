@@ -1,5 +1,18 @@
 # The Shadow Simulator
 
+## Alterações à estrutura base do Shadow.
+Adicionamos algumas pastas à estrutura do Shadow.
+Nomeadamente a pasta communication_api, e a pasta de exemplos, joao-hugo-exemplos.
+O monitor está na pasta zermia_monitorj.
+Também adicionamos uma biblioteca em src/lib/zermia_lib.
+
+É importante referir que existem várias mudanças espalhadas pelo código base do Shadow.
+A **grande maioria** destas mudanças tem o prefixo // ADDED - JH
+e acabam com //END
+
+
+
+
 ## Quickstart
 
 After installing the [dependencies](https://shadow.github.io/docs/guide/install_dependencies.html): build, test, and install Shadow into `~/.local`:

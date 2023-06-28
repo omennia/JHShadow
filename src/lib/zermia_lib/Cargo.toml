@@ -5,9 +5,14 @@ edition = "2021"
 
 [lib]
 name = "zermia_lib"
-#crate-type = ["cdylib"]
-crate-type = ["staticlib", "rlib"]
+crate-type = ["cdylib", "staticlib", "rlib"]
+#crate-type = ["staticlib", "rlib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 libc = { version = "0.2.97", default-features = false, features = ["std"] }
+lazy_static = "1.4.0"
+bindgen = "0.59"
+ipc-rs = "0.4.2"
+serde = { version = "1.0", features = ["derive"] }
+jni = "0.19.0"

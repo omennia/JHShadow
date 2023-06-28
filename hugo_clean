@@ -1,0 +1,85 @@
+# Code to remove all folders not required..
+
+# Removing all log files
+printf "Removing all log files..\n"
+find . -name "*.log" -type f -delete
+
+# Removing build
+if [ -d "build" ]; then
+  echo "  "
+  printf '%s\n' "Removing directory build"
+  rm -rf "build"
+  echo "  "
+fi
+
+# Removing cmake-build-debug
+if [ -d "cmake-build-debug" ]; then
+  echo "  "
+  printf '%s\n' "Removing directory cmake-build-debug"
+  rm -rf "cmake-build-debug"
+  echo "  "
+fi
+
+
+# Removing src/target
+if [ -d "src/target" ]; then
+  echo "  "
+  printf '%s\n' "Removing directory src/target"
+  rm -rf "src/target"
+  echo "  "
+fi
+
+
+# Removing joao-hugo-exemplos/communicator/target
+if [ -d "joao-hugo-exemplos/communicator/target" ]; then
+  echo "  "
+  printf '%s\n' "Removing directory joao-hugo-exemplos/communicator/target"
+  rm -rf "joao-hugo-exemplos/communicator/target"
+  echo "  "
+fi
+
+
+# Removing joao-hugo-exemplos/simple_tcp_server_client/shadow.data
+if [ -d "joao-hugo-exemplos/simple_tcp_server_client/shadow.data" ]; then
+  echo "  "
+  printf '%s\n' "Removing directory joao-hugo-exemplos/simple_tcp_server_client/shadow.data"
+  rm -rf "joao-hugo-exemplos/simple_tcp_server_client/shadow.data"
+  echo "  "
+fi
+
+# Removing joao-hugo-exemplos/simple_tcp_server_client/project-tonic/target
+if [ -d "joao-hugo-exemplos/simple_tcp_server_client/project-tonic/target" ]; then
+  echo "  "
+  printf '%s\n' "Removing directory joao-hugo-exemplos/simple_tcp_server_client/project-tonic/target"
+  rm -rf "joao-hugo-exemplos/simple_tcp_server_client/project-tonic/target"
+  echo "  "
+fi
+
+
+# Removing joao-hugo-exemplos/zermia/shadow.data
+if [ -d "joao-hugo-exemplos/zermia/shadow.data" ]; then
+  echo "  "
+  printf '%s\n' "Removing directory joao-hugo-exemplos/zermia/shadow.data"
+  rm -rf "joao-hugo-exemplos/zermia/shadow.data"
+  echo "  "
+fi
+
+
+# Removing zermia_monitor/target
+if [ -d "zermia_monitor/target" ]; then
+  echo "  "
+  printf '%s\n' "Removing directory zermia_monitor/target"
+  rm -rf "zermia_monitor/target"
+  rm -rf "zermia_monitor/Cargo.lock"
+  echo "  "
+fi
+
+
+# Removing communication_api/rust/rust_program/target
+if [ -d "communication_api/rust/rust_program/target" ]; then
+  echo "  "
+  printf '%s\n' "Removing directory communication_api/rust/rust_program/target"
+  rm -rf "communication_api/rust/rust_program/target"
+  rm -rf "communication_api/rust/rust_program/Cargo.lock"
+  echo "  "
+fi

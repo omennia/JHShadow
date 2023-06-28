@@ -1,0 +1,1 @@
+/home/hugocardante/JHShadow/joao-hugo-exemplos/client_server_do_relatorio/target/debug/client_relatorio: /home/hugocardante/JHShadow/joao-hugo-exemplos/client_server_do_relatorio/src/client_relatorio.rs

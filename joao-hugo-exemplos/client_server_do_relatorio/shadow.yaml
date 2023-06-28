@@ -1,0 +1,24 @@
+general:
+  stop_time: 30s
+  model_unblocked_syscall_latency: false
+  parallelism: 8
+  
+network:
+  graph:
+    type: 1_gbit_switch
+
+hosts:
+  server:
+    ip_addr: 11.19.171.162
+    network_node_id: 0
+    processes:
+    - path: server_relatorio
+      args: "11.19.171.162"
+      start_time: 1s
+  client:
+    network_node_id: 0
+    quantity: 1
+    processes:
+    - path: client_relatorio
+      args: "11.19.171.162"
+      start_time: 4s

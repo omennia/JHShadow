@@ -46,6 +46,35 @@ Payload* payload_new(const Thread* thread, UntypedForeignPtr data, gsize dataLen
     return payload;
 }
 
+// ADDED - JH
+// Getters e setters para mudar um byte da payload
+guint8 payload_get_data_byte(Payload* payload, gsize index) {
+    if (payload == NULL || payload->data == NULL || index >= payload->length) {
+        return 0;
+    }
+
+    g_mutex_lock(&(payload->lock));
+    guint8 byte_value = ((guint8*)payload->data)[index];
+    g_mutex_unlock(&(payload->lock));
+
+    return byte_value;
+}
+
+gboolean payload_set_data_byte(Payload* payload, guint8 new_byte_value, gsize index) {
+    if (payload == NULL || payload->data == NULL || index >= payload->length) {
+        return FALSE;
+    }
+
+    g_mutex_lock(&(payload->lock));
+    ((guint8*)payload->data)[index] = new_byte_value;
+    g_mutex_unlock(&(payload->lock));
+
+    return TRUE;
+}
+// END
+
+
+
 /* This is a copy of `payload_new` but passes the memory manager through. Once we've moved
  * UDP sockets to rust, we can remove `payload_new` and rename this function to
  * `payload_new`. */

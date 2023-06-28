@@ -18,9 +18,13 @@ async fn start_server(address: String, monitor_address: &String) {
         match stream {
             Err(e) => println!("failed: {}", e),
             Ok(stream) => {
-                println!("Conexão entre o servidor e o cliente estabelecida:\n\t {:?}\n", stream);
+                println!(
+                    "Conexão entre o servidor e o cliente estabelecida:\n\t {:?}\n",
+                    stream
+                );
                 if let Err(e) = handle_client(stream, monitor_address).await {
-                    println!("{:?}", e);
+                    println!("Erro no ciclo de conexação [server]: {:?}", e);
+                    // continue;
                 };
             }
         }
@@ -40,8 +44,8 @@ async fn handle_client(mut stream: TcpStream, monitor_address: &String) -> Resul
         let my_sentence = std::str::from_utf8(&buf[..bytes_read])
             .unwrap()
             .to_uppercase();
-          
-          println!("Vamos devolver esta mensagem: {}", my_sentence);
+
+        println!("Vamos devolver esta mensagem: {}", my_sentence);
         // println!("Aqui vão os bytes read: {}", bytes_read);
         if bytes_read == 0 {
             return Ok(());
@@ -52,7 +56,7 @@ async fn handle_client(mut stream: TcpStream, monitor_address: &String) -> Resul
 }
 
 async fn connect_to_count(monitor_address: &String) -> Result<(), Box<dyn std::error::Error>> {
-  let addr = format!("http://{}:9999", monitor_address);
+    let addr = format!("http://{}:9999", monitor_address);
     println!("O address do monitor é: {}", addr);
     let mut client = MonitorClient::connect(addr).await?;
     let request = tonic::Request::new(HelloRequest {

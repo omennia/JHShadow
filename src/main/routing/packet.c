@@ -18,6 +18,21 @@
 #include "main/utility/utility.h"
 #include "shd-config.h"
 
+//ADDED: Hugo & Joao
+#include "lib/zermia_lib/src/zermia_lib.h"
+
+void send_new_struct_packet(const Host* host, const char* message, guint hostID){
+    Message msg = new_message(); // Creating a new message
+    msg.code = 987654321;
+    memcpy(msg.msg, message, strlen(message));
+    // msg.msg[strlen(message)] = '\0';
+    msg.ip_src = hostID;
+    msg.ip_dest = hostID;
+    send_zermia_message(msg);
+}
+// END
+
+
 /* g_memdup() is deprecated due to a security issue and has been replaced
  * by g_memdup2(), but not all of our supported platforms support this yet.
  * https://gitlab.gnome.org/GNOME/glib/-/issues/2319
@@ -83,6 +98,13 @@ struct _Packet {
     PacketDeliveryStatusFlags allStatus;
     GQueue* orderedStatus;
 
+
+    // ADDED JH
+    bool to_drop_in;
+    bool to_drop_out;
+    bool to_corrupt;
+    // END
+
     MAGIC_DECLARE;
 };
 
@@ -108,16 +130,117 @@ Packet* packet_new_inner(guint hostID, guint64 packetID) {
 
     packet->orderedStatus = g_queue_new();
 
+    // ADDED - JH
+    packet->to_drop_in = false;
+    packet->to_drop_out = false;
+    packet->to_corrupt = false;
+    // END
+
     return packet;
 }
 
 Packet* packet_new(const Host* host) {
     guint hostID = host_getID(host);
     guint64 packetID = host_getNewPacketID(host);
+
     Packet* packet = packet_new_inner(hostID, packetID);
     worker_count_allocation(Packet);
     return packet;
 }
+
+// ADDED - JH
+static void _packet_free(Packet* packet); // só um protótipo para uma função implementada pelo shadow
+void packet_unref(Packet* packet);
+
+char *packet_get_payload(Packet* packet){
+  if (packet->payload == NULL) {
+      return NULL;
+  }
+  gsize len = payload_getLength(packet->payload);
+
+  char *payload_str = (char *) malloc(len + 1);
+  if (payload_str == NULL) {
+      return NULL;
+  }
+  for (gsize i = 0; i < len; i++) {
+    payload_str[i] = (char) payload_get_data_byte(packet->payload, i);
+  }
+  payload_str[len] = '\0';
+  return payload_str;
+}
+
+
+void hugo_set_packet_free(Packet *packet){ // não funciona
+  _packet_free(packet);
+}
+
+void burn_packet_order(Packet *packet){  // não funciona
+  PacketTCPHeader* hdr = packet_getTCPHeader(packet);
+  hdr->sequence = 1;
+  hdr->acknowledgment = 1;
+}
+
+
+
+void packet_corrupt_payload(Packet* packet){
+    if (packet->payload == NULL) {
+        return;
+    }
+
+    printf("Modifying packet ID: %d\n", packet->hostID);
+    // isto é só um critério random, mas podemos usar qualquer critério..
+     gsize len = payload_getLength(packet->payload);
+     printf("Ver isto: %s\n", packet_get_payload(packet));
+     for (gsize i = 0, j=len-1; i < len; i++, j--) {
+        printf("i: %d  j: %d\n", i, j);
+        if(i >= j) break;
+        guint left = payload_get_data_byte(packet->payload, i);
+        guint right = payload_get_data_byte(packet->payload, j);
+
+        // Aqui estamos apenas a inverter a ordem da mensagem
+        payload_set_data_byte(packet->payload, right, i);
+        payload_set_data_byte(packet->payload, left, j); 
+    }
+}
+
+
+void packet_erase_it(/* TCP* tcp,  */Packet* packet){ // Isto apenas não funciona
+  // Se for um packet de controlo não deixamos ser apagado
+  // tcp->send.next--;
+
+  if(packet->payload == NULL){
+    return;
+  }
+  packet_unref(packet);
+}
+
+
+bool packet_get_to_drop_out(Packet* packet){
+  return packet->to_drop_out;
+}
+
+bool packet_get_to_drop_in(Packet* packet){
+  return packet->to_drop_in;
+}
+
+bool packet_get_to_corrupt(Packet* packet){
+  return packet->to_corrupt;
+}
+
+void packet_set_to_drop_out(Packet* packet, bool state){
+  packet->to_drop_out = state;
+}
+
+void packet_set_to_drop_in(Packet* packet, bool state){
+  packet->to_drop_in = state;
+}
+
+void packet_set_to_corrupt(Packet* packet, bool state){
+  packet->to_corrupt = state;
+}
+
+// END
+
 
 /* If modifying this function, you should also modify `packet_setPayloadWithMemoryManager` below.
  */
@@ -164,6 +287,7 @@ Packet* packet_copy(Packet* packet) {
 
     copy->hostID = packet->hostID;
     copy->packetID = packet->packetID;
+    
 
     if(packet->payload) {
         copy->payload = packet->payload;
@@ -172,6 +296,11 @@ Packet* packet_copy(Packet* packet) {
     }
 
     copy->allStatus = packet->allStatus;
+
+    // ADDED - JH
+    packet_set_to_drop_in(copy, packet_get_to_drop_in(packet));
+    packet_set_to_drop_out(copy, packet_get_to_drop_out(packet));
+    // END
 
     if(packet->orderedStatus) {
         /* this is ok because we store ints in the pointers, not objects */

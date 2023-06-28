@@ -10,6 +10,7 @@ path = "lib.rs"
 crate-type = ["rlib", "staticlib"]
 
 [dependencies]
+zermia_lib = { path = "../lib/zermia_lib" }
 anyhow = { version = "1.0.69", features = ["backtrace"] }
 atomic_refcell = "0.1"
 backtrace = "0.3.67"
@@ -62,6 +63,7 @@ which = "4.4.0"
 perf_timers = []
 
 [build-dependencies]
+zermia_lib = { path = "../lib/zermia_lib" }
 shadow-build-common = { path = "../lib/shadow-build-common" }
 bindgen = { version = "0.64.0" }
 cbindgen = { version = "0.24.3" }
